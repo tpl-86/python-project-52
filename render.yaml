@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: python-project-52
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: |
+      pip install uv # Устанавливаем uv в окружение Render
+      uv pip sync --system-site-packages # Синхронизируем зависимости из pyproject.toml
+      python manage.py collectstatic --no-input
+      python manage.py migrate
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: task_manager
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
