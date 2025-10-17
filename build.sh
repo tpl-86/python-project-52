@@ -7,7 +7,7 @@ echo "--> Installing dependencies with uv..."
 uv pip sync pyproject.toml --no-cache
 
 echo "--> Collecting static files..."
-poetry run python manage.py collectstatic --no-input --clear
+uv run python manage.py collectstatic --no-input --clear
 
 echo "--> Applying database migrations..."
-poetry run python manage.py migrate
+uv run python manage.py migrate
