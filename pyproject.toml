@@ -10,5 +10,6 @@ dependencies = [
     "gunicorn>=23.0.0",
     "psycopg2-binary>=2.9.11",
     "python-dotenv>=1.1.1",
+    "ruff>=0.14.1",
     "whitenoise>=6.11.0",
 ]
