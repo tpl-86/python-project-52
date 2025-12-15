@@ -1,11 +1,11 @@
 from django.shortcuts import render
+from django.views import View
+
 
 # Create your views here.
-def index(request):
+def home_page(request):
     return render(
         request,
-        "index.html",
-        context={
-            "who": "world",
-        },
+        "home.html",
+        {},
     )
