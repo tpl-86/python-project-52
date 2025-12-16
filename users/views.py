@@ -1,7 +1,7 @@
-from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
@@ -15,13 +15,18 @@ class UserListView(ListView):
     queryset = User.objects.order_by('id')
 
 
-class OnlySelfAccessMixin(LoginRequiredMixin):
-    def dispath(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj != request.user:
+class SelfOnlyMixin(LoginRequiredMixin):
+    """Разрешаем изменять/удалять только самого себя.
+    Проверяем pk из URL до любых действий, чтобы не дать попасть в form_valid/delete.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        target_pk = kwargs.get('pk')
+        if target_pk is not None and int(target_pk) != request.user.pk:
             messages.error(request, 'Вы не можете изменять или удалять другого пользователя.')
             return redirect('users:list')
-        return super().dispatch(request, *args, *kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class UserCreateView(CreateView):
@@ -32,26 +37,27 @@ class UserCreateView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Пользователь успешно зарегистрирован')
+        messages.success(self.request, 'Пользователь успешно зарегистрирован. Теперь войдите.')
         return response
 
 
-class UserUpdateView(OnlySelfAccessMixin, UpdateView):
+class UserUpdateView(SelfOnlyMixin, UpdateView):  # миксин ПЕРВЫМ!
     model = User
     form_class = UserUpdateForm
     template_name = 'users/user_form.html'
     success_url = reverse_lazy('users:list')
-    
+
     def form_valid(self, form):
-        messages.success(self.request, 'Пользователь успешно изменен')
+        messages.success(self.request, 'Пользователь успешно изменён.')
         return super().form_valid(form)
 
 
-class UserDeleteView(OnlySelfAccessMixin, DeleteView):
+class UserDeleteView(SelfOnlyMixin, DeleteView):  # миксин ПЕРВЫМ!
     model = User
     template_name = 'users/user_confirm_delete.html'
     success_url = reverse_lazy('users:list')
 
     def post(self, request, *args, **kwargs):
-        messages.success(self.request, 'Пользователь успешно удален')
+        messages.success(self.request, 'Пользователь успешно удалён.')
         return super().post(request, *args, **kwargs)
+

@@ -18,10 +18,11 @@
         <td>{{ u.id }}</td>
         <td>{{ u.username }}</td>
         <td>{{ u.first_name }} {{ u.last_name }}</td>
-        <td>{{ u.created_at }}</td>
+        <td>{{ u.date_joined|date:"d.m.Y H:i" }}</td>
         <td>
           {% if user.is_authenticated and user.id == u.id %}
             <a href="{% url 'users:update' u.id %}">Изменить</a>
+            <br>
             <a href="{% url 'users:delete' u.id %}">Удалить</a>
           {% else %}
             —

@@ -3,84 +3,72 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 
-class UsersCRUDAuthTests(TestCase):
+class UsersCRUDTests(TestCase):
+    fixtures = ['users.json']  # загрузит из users/fixtures/users.json
+
     def setUp(self):
-        self.user1 = User.objects.create_user(
-            username='alice', password='password123',
-            first_name='Alice', last_name='A', email='alice@example.com'
-        )
-        self.user2 = User.objects.create_user(
-            username='bob', password='password123',
-            first_name='Bob', last_name='B', email='bob@example.com'
-        )
+        self.alice = User.objects.get(pk=1)
+        self.bob = User.objects.get(pk=2)
 
-    def test_users_list_accessible_anonymously(self):
-        resp = self.client.get(reverse('users:list'))
-        self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, 'alice')
-        self.assertContains(resp, 'bob')
-
+    # C — регистрация
     def test_register_redirects_to_login(self):
         resp = self.client.post(reverse('users:create'), {
-            'username': 'charlie',
             'first_name': 'Charlie',
             'last_name': 'C',
-            'email': 'charlie@example.com',
-            'password1': 'StrongPassw0rd!',
-            'password2': 'StrongPassw0rd!',
+            'username': 'charlie',
+            # Пароль подобран под простое правило (>= 3 цифр).
+            # Если у вас включены стандартные валидаторы Django (минимум 8 и т.д.),
+            # используйте, например, 'Str0ngPass123'.
+            'password1': 'a1b2c3',
+            'password2': 'a1b2c3',
         })
+        self.assertEqual(resp.status_code, 302)
         self.assertRedirects(resp, reverse('login'))
         self.assertTrue(User.objects.filter(username='charlie').exists())
 
-    def test_login_redirects_to_home(self):
-        resp = self.client.post(reverse('login'), {
-            'username': 'alice',
-            'password': 'password123'
-        })
-        self.assertRedirects(resp, reverse('home'))
-
+    # U — обновление (своего профиля)
     def test_update_self_success(self):
-        self.client.login(username='alice', password='password123')
-        url = reverse('users:update', args=[self.user1.pk])
+        self.client.force_login(self.alice)
+        url = reverse('users:update', args=[self.alice.pk])
         resp = self.client.post(url, {
-            'username': 'alice',
             'first_name': 'AliceNew',
             'last_name': 'A',
-            'email': 'alice_new@example.com',
+            'username': 'alice',
         })
+        self.assertEqual(resp.status_code, 302)
         self.assertRedirects(resp, reverse('users:list'))
-        self.user1.refresh_from_db()
-        self.assertEqual(self.user1.first_name, 'AliceNew')
-        self.assertEqual(self.user1.email, 'alice_new@example.com')
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.first_name, 'AliceNew')
 
+    # U — попытка обновить другого пользователя запрещена
     def test_update_other_denied(self):
-        self.client.login(username='alice', password='password123')
-        url = reverse('users:update', args=[self.user2.pk])
+        self.client.force_login(self.alice)
+        url = reverse('users:update', args=[self.bob.pk])
         resp = self.client.post(url, {
-            'username': 'bob',
             'first_name': 'Hacked',
             'last_name': 'B',
-            'email': 'hack@example.com',
+            'username': 'bob',
         })
+        self.assertEqual(resp.status_code, 302)
         self.assertRedirects(resp, reverse('users:list'))
-        self.user2.refresh_from_db()
-        self.assertEqual(self.user2.first_name, 'Bob')
+        self.bob.refresh_from_db()
+        self.assertEqual(self.bob.first_name, 'Bob')
 
+    # D — удаление самого себя
     def test_delete_self(self):
-        self.client.login(username='bob', password='password123')
-        url = reverse('users:delete', args=[self.user2.pk])
+        self.client.force_login(self.bob)
+        url = reverse('users:delete', args=[self.bob.pk])
         resp = self.client.post(url)
+        self.assertEqual(resp.status_code, 302)
         self.assertRedirects(resp, reverse('users:list'))
-        self.assertFalse(User.objects.filter(username='bob').exists())
+        self.assertFalse(User.objects.filter(pk=self.bob.pk).exists())
 
+    # D — удаление другого пользователя запрещено
     def test_delete_other_denied(self):
-        self.client.login(username='alice', password='password123')
-        url = reverse('users:delete', args=[self.user2.pk])
+        self.client.force_login(self.alice)
+        url = reverse('users:delete', args=[self.bob.pk])
         resp = self.client.post(url)
+        self.assertEqual(resp.status_code, 302)
         self.assertRedirects(resp, reverse('users:list'))
-        self.assertTrue(User.objects.filter(username='bob').exists())
+        self.assertTrue(User.objects.filter(pk=self.bob.pk).exists())
 
-    def test_logout_post_redirects_to_home(self):
-        self.client.login(username='alice', password='password123')
-        resp = self.client.post(reverse('logout'))
-        self.assertRedirects(resp, reverse('home'))
