@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-
+from django.contrib.auth import logout
 from .forms import UserRegisterForm, UserUpdateForm
+from django.contrib.auth.views import LoginView as BaseLoginView
 
 
 class UserListView(ListView):
@@ -60,4 +61,18 @@ class UserDeleteView(SelfOnlyMixin, DeleteView):  # миксин ПЕРВЫМ!
     def post(self, request, *args, **kwargs):
         messages.success(self.request, 'Пользователь успешно удалён.')
         return super().post(request, *args, **kwargs)
+
+
+class CustomLoginView(BaseLoginView):
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Вы залогинены.')  # Сообщение после логина
+        return response
+
+
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+        messages.info(request, 'Вы разлогинены')
+    return redirect(reverse_lazy('home'))
 

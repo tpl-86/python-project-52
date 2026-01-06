@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from statuses.models import Status
 
 # Create your models here.
 class Task(models.Model):
@@ -18,3 +19,8 @@ class Task(models.Model):
     )
     created_at=models.DateTimeField(auto_now_add=True)
     done = models.BooleanField(default=False)
+    status = models.ForeignKey(
+        Status,
+        on_delete=models.PROTECT,
+        related_name='tasks'
+    )
