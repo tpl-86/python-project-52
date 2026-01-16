@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container wrapper flex-grow-1">
+    <h1 class="my-4">{% if object %}Изменение задачи{% else %}Создать задачу{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label" for="id_name">Имя</label>
+            <input type="text" name="name" maxlength="255" class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                   value="{{ form.name.value|default_if_none:'' }}" 
+                   placeholder="Имя задачи" required id="id_name">
+            {% if form.name.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.name.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Поле: Описание -->
+        <div class="mb-3">
+            <label class="form-label" for="id_description">Описание</label>
+            <textarea name="description" class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
+                      placeholder="Описание" id="id_description" rows="5">{{ form.description.value|default_if_none:'' }}</textarea>
+            {% if form.description.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.description.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Поле: Статус (выпадающий список) -->
+        <div class="mb-3">
+            <label class="form-label" for="id_status">Статус</label>
+            <select name="status" class="form-control {% if form.status.errors %}is-invalid{% endif %}" id="id_status" required>
+                {% for choice in form.status.field.choices %}
+                    <option value="{{ choice.0 }}" {% if form.status.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+            {% if form.status.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.status.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Поле: Исполнитель (выпадающий список) -->
+        <div class="mb-3">
+            <label class="form-label" for="id_executor">Исполнитель</label>
+            <select name="executor" class="form-control {% if form.executor.errors %}is-invalid{% endif %}" id="id_executor">
+                {% for choice in form.executor.field.choices %}
+                    <option value="{{ choice.0 }}" {% if form.executor.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+            {% if form.executor.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.executor.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+          <label for="id_labels">Метки</label>
+          <select name="labels" id="id_labels" multiple class="form-control">  {# Multiple select #}
+          {% for label in form.labels.field.queryset %}
+            <option value="{{ label.pk }}" {% if label.pk in form.labels.value %}selected{% endif %}>{{ label.name }}</option>
+          {% endfor %}
+          </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">{% if object %}Изменить{% else %}Создать{% endif %}</button>
+    </form>
+</div>
+{% endblock %}

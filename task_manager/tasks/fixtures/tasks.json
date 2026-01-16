@@ -1,0 +1,40 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$emPtaLdgXCmxtlls4jARQl$2o3lJhsDkrOHPJsA3pk5dwEDQ6uVnBVC6QnD7JSy1iE=",
+      "username": "author",
+      "date_joined": "2026-01-06T00:00:00Z"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$emPtaLdgXCmxtlls4jARQl$2o3lJhsDkrOHPJsA3pk5dwEDQ6uVnBVC6QnD7JSy1iE=",
+      "username": "other",
+      "date_joined": "2026-01-06T00:00:00Z"
+    }
+  },
+  {
+    "model": "statuses.status",
+    "pk": 1,
+    "fields": {
+      "name": "Новый",
+      "created_at": "2026-01-06T00:00:00Z"
+    }
+  },
+  {
+    "model": "tasks.task",
+    "pk": 1,
+    "fields": {
+      "name": "Тестовая задача",
+      "description": "",
+      "status": 1,
+      "author": 1,
+      "executor": null,
+      "created_at": "2026-01-06T00:00:00Z"
+    }
+  }
+]

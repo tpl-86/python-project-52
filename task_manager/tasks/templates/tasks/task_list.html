@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container wrapper flex-grow-1">
+<h1 class="my-4">Задачи</h1>
+<a class="btn btn-primary mb-3" href="{% url 'tasks:task_create' %}">Создать задачу</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Статус</th>
+            <th>Автор</th>
+            <th>Исполнитель</th>
+            <th>Дата создания</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.status.id }}</td>
+            <td><a href="{% url 'tasks:task_detail' task.pk %}">{{ task.name }}</a></td>
+            <td>{{ task.status.name }}</td>
+            <td>{{ task.author.username }}</td>
+            <td>{{ task.executor.get_full_name|default:"Нет" }}</td>
+            <td>{{ task.created_at|date:"d.m.Y H:i" }}</td>
+            <td>
+                <a href="{% url 'tasks:task_update' task.pk %}">Изменить</a>
+                <br>
+                <a href="{% url 'tasks:task_delete' task.pk %}">Удалить</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">Нет задач.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -26,10 +26,11 @@ def index(request):
 urlpatterns = [
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("admin/", admin.site.urls),
-     path('users/', include('task_manager.users.urls', namespace='users')),
+    path('users/', include('task_manager.users.urls', namespace='users')),
+    path('statuses/', include('task_manager.statuses.urls', namespace='statuses')),
+    path('tasks/', include('task_manager.tasks.urls', namespace='tasks')),
     path('login/', CustomLoginView.as_view(
         template_name='registration/login.html'
     ), name='login'),
     path('logout/', logout_view, name='logout'),
-    path('statuses/', include('task_manager.statuses.urls', namespace='statuses')),
 ]
