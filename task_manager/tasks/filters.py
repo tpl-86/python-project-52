@@ -1,7 +1,7 @@
 import django_filters
 from .models import Task
-from statuses.models import Status
-from labels.models import Label
+from task_manager.statuses.models import Status
+from task_manager.labels.models import Label
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import gettext_lazy as _
