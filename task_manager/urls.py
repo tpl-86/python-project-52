@@ -16,12 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.http import HttpResponse
-from django.urls import path
+from django.urls import path, include
+from django.views.generic import TemplateView
+from task_manager.users.views import logout_view, CustomLoginView
 
 def index(request):
     return HttpResponse("Привет! Приложение успешно запущено.")
 
 urlpatterns = [
-    path("", index, name="index"),
+    path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("admin/", admin.site.urls),
+     path('users/', include('task_manager.users.urls', namespace='users')),
+    path('login/', CustomLoginView.as_view(
+        template_name='registration/login.html'
+    ), name='login'),
+    path('logout/', logout_view, name='logout'),
 ]

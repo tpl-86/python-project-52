@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}{% if form.instance.pk %}Изменение пользователя{% else %}Регистрация{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h1 class="my-4">{% if form.instance.pk %}Изменение пользователя{% else %}Регистрация{% endif %}</h1>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {# Ошибки формы без привязки к полям #}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {% for err in form.non_field_errors %}
+          <div>{{ err }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {# Имя #}
+    <div class="mb-3">
+      <label class="form-label" for="id_first_name">Имя</label>
+      <input
+        type="text"
+        name="first_name"
+        maxlength="150"
+        class="form-control{% if form.first_name.errors %} is-invalid{% endif %}"
+        placeholder="Имя"
+        id="id_first_name"
+        value="{{ form.first_name.value|default_if_none:'' }}"
+        {% if form.first_name.field.required %}required{% endif %}
+      >
+      {% for err in form.first_name.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    {# Фамилия #}
+    <div class="mb-3">
+      <label class="form-label" for="id_last_name">Фамилия</label>
+      <input
+        type="text"
+        name="last_name"
+        maxlength="150"
+        class="form-control{% if form.last_name.errors %} is-invalid{% endif %}"
+        placeholder="Фамилия"
+        id="id_last_name"
+        value="{{ form.last_name.value|default_if_none:'' }}"
+        {% if form.last_name.field.required %}required{% endif %}
+      >
+      {% for err in form.last_name.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    {# Имя пользователя #}
+    <div class="mb-3">
+      <label class="form-label" for="id_username">Имя пользователя</label>
+      <input
+        type="text"
+        name="username"
+        maxlength="150"
+        class="form-control{% if form.username.errors %} is-invalid{% endif %}"
+        placeholder="Имя пользователя"
+        id="id_username"
+        value="{{ form.username.value|default_if_none:'' }}"
+        {% if form.username.field.required %}required{% endif %}
+        aria-describedby="id_username_helptext"
+        autofocus
+      >
+      <div class="form-text" id="id_username_helptext">
+        Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.
+      </div>
+      {% for err in form.username.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    {# Пароли показываем только на странице регистрации #}
+    {% if not form.instance.pk %}
+      <div class="mb-3">
+        <label class="form-label" for="id_password1">Пароль</label>
+        <input
+          type="password"
+          name="password1"
+          autocomplete="new-password"
+          class="form-control{% if form.password1.errors %} is-invalid{% endif %}"
+          placeholder="Пароль"
+          id="id_password1"
+          aria-describedby="id_password1_helptext"
+          {% if form.password1.field.required %}required{% endif %}
+        >
+        <div class="form-text" id="id_password1_helptext">
+          <ul class="mb-0">
+            <li>Ваш пароль должен содержать как минимум 3 символа.</li>
+          </ul>
+        </div>
+        {% for err in form.password1.errors %}
+          <div class="invalid-feedback d-block">{{ err }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="id_password2">Подтверждение пароля</label>
+        <input
+          type="password"
+          name="password2"
+          autocomplete="new-password"
+          class="form-control{% if form.password2.errors %} is-invalid{% endif %}"
+          placeholder="Подтверждение пароля"
+          id="id_password2"
+          aria-describedby="id_password2_helptext"
+          {% if form.password2.field.required %}required{% endif %}
+        >
+        <div class="form-text" id="id_password2_helptext">
+          Для подтверждения введите, пожалуйста, пароль ещё раз.
+        </div>
+        {% for err in form.password2.errors %}
+          <div class="invalid-feedback d-block">{{ err }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">
+      {% if form.instance.pk %}Сохранить{% else %}Зарегистрировать{% endif %}
+    </button>
+  </form>
+</div>
+{% endblock %}
