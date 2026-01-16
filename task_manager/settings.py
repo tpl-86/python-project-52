@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django_bootstrap5",
     "task_manager.users",
+    "task_manager.statuses",
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Страницы логина/редиректы
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
 
 ROOT_URLCONF = 'task_manager.urls'
 

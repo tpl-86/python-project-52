@@ -31,4 +31,5 @@ urlpatterns = [
         template_name='registration/login.html'
     ), name='login'),
     path('logout/', logout_view, name='logout'),
+    path('statuses/', include('task_manager.statuses.urls', namespace='statuses')),
 ]
