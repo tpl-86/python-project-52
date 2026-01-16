@@ -4,6 +4,31 @@
 <div class="container wrapper flex-grow-1">
 <h1 class="my-4">Задачи</h1>
 <a class="btn btn-primary mb-3" href="{% url 'tasks:task_create' %}">Создать задачу</a>
+<div class="card text-bg-light mb-3">
+    <div class="card-body bg-ligth">
+<form class="form-inline center" method="get">
+    <div class="row">
+        <div class="md-3">
+            <label class="form-label" for="id_status">Статус</label>
+            {{ filter.form.status }}
+        </div>
+        <div class="md-3">
+            <label class="form-label" for="id_executor">Исполнитель</label>
+            {{ filter.form.executor }}
+        </div>
+        <div class="md-3">
+            <label class="form-label" for="id_labels">Метка</label>
+            {{ filter.form.labels }}
+        </div>
+        <div class="md-3">
+            <label class="form-label" for="self_tasks">Только свои задачи</label>
+            {{ filter.form.self_tasks }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Показать</button>
+</form>
+</div>
+</div>
 <table class="table table-striped">
     <thead>
         <tr>
