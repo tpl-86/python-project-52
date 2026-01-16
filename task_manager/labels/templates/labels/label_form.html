@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container wrapper flex-grow-1">
+<h1 class="my-4">{% if object %}Изменить метку{% else %}Создать метку{% endif %}</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_name">Имя</label>
+        <input type="text" name="name" id="id_name" value="{{ form.name.value|default_if_none:'' }}" placeholder="Имя" class="form-control" required>
+        {% if form.name.errors %}
+            <div class="invalid-feedback">
+                {{ form.name.errors }}
+            </div>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary">{% if object %}Изменить{% else %}Создать{% endif %}</button>
+</form>
+</div>
+{% endblock %}

@@ -26,6 +26,7 @@
         {% if request.user.is_authenticated %}
         <li class="nav-item"><a class="nav-link" href="{% url 'users:list' %}">Пользователи</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'statuses:status_list' %}">Статусы</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'labels:label_list' %}">Метки</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'tasks:task_list' %}">Задачи</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Выход</a></li>
         {% else %}
