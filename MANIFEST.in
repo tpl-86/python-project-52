@@ -1,0 +1,3 @@
+recursive-include task_manager/templates __.html
+recursive-include task_manager/__/templates __.html
+recursive-include task_manager/__/fixtures *.json
