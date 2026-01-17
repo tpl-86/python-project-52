@@ -16,3 +16,8 @@ dependencies = [
     "tree>=0.2.4",
     "whitenoise>=6.11.0",
 ]
+[tool.setuptools.package-data]
+"task_manager.users" = ["templates/users/*.html", "fixtures/*.json"]
+"task_manager.statuses" = ["templates/statuses/*.html", "fixtures/*.json"]
+"task_manager.tasks" = ["templates/tasks/*.html", "fixtures/*.json"]
+"task_manager.labels" = ["templates/labels/*.html", "fixtures/*.json"]
