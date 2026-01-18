@@ -78,50 +78,48 @@
       {% endfor %}
     </div>
 
-    {# Пароли показываем только на странице регистрации #}
-    {% if not form.instance.pk %}
-      <div class="mb-3">
-        <label class="form-label" for="id_password1">Пароль</label>
-        <input
-          type="password"
-          name="password1"
-          autocomplete="new-password"
-          class="form-control{% if form.password1.errors %} is-invalid{% endif %}"
-          placeholder="Пароль"
-          id="id_password1"
-          aria-describedby="id_password1_helptext"
-          {% if form.password1.field.required %}required{% endif %}
-        >
-        <div class="form-text" id="id_password1_helptext">
-          <ul class="mb-0">
-            <li>Ваш пароль должен содержать как минимум 3 символа.</li>
-          </ul>
-        </div>
-        {% for err in form.password1.errors %}
-          <div class="invalid-feedback d-block">{{ err }}</div>
-        {% endfor %}
+    {# Пароль — ВСЕГДА показываем, и на регистрации, и на редактировании #}
+    <div class="mb-3">
+      <label class="form-label" for="id_password1">Пароль</label>
+      <input
+        type="password"
+        name="password1"
+        autocomplete="new-password"
+        class="form-control{% if form.password1.errors %} is-invalid{% endif %}"
+        placeholder="Пароль"
+        id="id_password1"
+        aria-describedby="id_password1_helptext"
+        {% if form.password1.field.required %}required{% endif %}
+      >
+      <div class="form-text" id="id_password1_helptext">
+        <ul class="mb-0">
+          <li>Ваш пароль должен содержать как минимум 3 символа.</li>
+        </ul>
       </div>
+      {% for err in form.password1.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label" for="id_password2">Подтверждение пароля</label>
-        <input
-          type="password"
-          name="password2"
-          autocomplete="new-password"
-          class="form-control{% if form.password2.errors %} is-invalid{% endif %}"
-          placeholder="Подтверждение пароля"
-          id="id_password2"
-          aria-describedby="id_password2_helptext"
-          {% if form.password2.field.required %}required{% endif %}
-        >
-        <div class="form-text" id="id_password2_helptext">
-          Для подтверждения введите, пожалуйста, пароль ещё раз.
-        </div>
-        {% for err in form.password2.errors %}
-          <div class="invalid-feedback d-block">{{ err }}</div>
-        {% endfor %}
+    <div class="mb-3">
+      <label class="form-label" for="id_password2">Подтверждение пароля</label>
+      <input
+        type="password"
+        name="password2"
+        autocomplete="new-password"
+        class="form-control{% if form.password2.errors %} is-invalid{% endif %}"
+        placeholder="Подтверждение пароля"
+        id="id_password2"
+        aria-describedby="id_password2_helptext"
+        {% if form.password2.field.required %}required{% endif %}
+      >
+      <div class="form-text" id="id_password2_helptext">
+        Для подтверждения введите, пожалуйста, пароль ещё раз.
       </div>
-    {% endif %}
+      {% for err in form.password2.errors %}
+        <div class="invalid-feedback d-block">{{ err }}</div>
+      {% endfor %}
+    </div>
 
     <button type="submit" class="btn btn-primary">
       {% if form.instance.pk %}Сохранить{% else %}Зарегистрировать{% endif %}
