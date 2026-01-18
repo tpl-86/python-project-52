@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 
 class UserRegisterForm(forms.ModelForm):
-    # Стандартные поля формы
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={"id": "id_password1", "class": "form-control"}),
@@ -13,17 +12,10 @@ class UserRegisterForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={"id": "id_password2", "class": "form-control"}),
     )
 
-    # Доп. алиасы для совместимости с тестами: password/password_confirmation
-    # (они будут маппиться в password1/password2 в __init__)
-    password = forms.CharField(
-        label="Password (alias)",
-        widget=forms.PasswordInput,
-        required=False,
-    )
+    # алиасы для совместимости с тестами (если приходят password/password_confirmation)
+    password = forms.CharField(label="Password (alias)", widget=forms.PasswordInput, required=False)
     password_confirmation = forms.CharField(
-        label="Password confirmation (alias)",
-        widget=forms.PasswordInput,
-        required=False,
+        label="Password confirmation (alias)", widget=forms.PasswordInput, required=False
     )
 
     class Meta:
@@ -37,7 +29,6 @@ class UserRegisterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Маппим альтернативные имена на стандартные, если они пришли
         if self.data:
             data = self.data.copy()
             if not data.get("password1") and data.get("password"):
@@ -50,8 +41,6 @@ class UserRegisterForm(forms.ModelForm):
         cleaned = super().clean()
         p1 = cleaned.get("password1") or ""
         p2 = cleaned.get("password2") or ""
-
-        # Единственная проверка: длина >= 3
         if len(p1) < 3:
             self.add_error("password1", "Password must contain at least 3 characters.")
         if p1 != p2:
@@ -67,6 +56,18 @@ class UserRegisterForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
+    # ДОБАВЛЕНО: поля пароля как необязательные, чтобы они присутствовали на странице
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"id": "id_password1", "class": "form-control"}),
+        required=False,
+    )
+    password2 = forms.CharField(
+        label="Password confirmation",
+        widget=forms.PasswordInput(attrs={"id": "id_password2", "class": "form-control"}),
+        required=False,
+    )
+
     class Meta:
         model = User
         fields = ("username", "first_name", "last_name")
@@ -75,3 +76,26 @@ class UserUpdateForm(forms.ModelForm):
             "first_name": forms.TextInput(attrs={"id": "id_first_name", "class": "form-control"}),
             "last_name": forms.TextInput(attrs={"id": "id_last_name", "class": "form-control"}),
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        p1 = cleaned.get("password1") or ""
+        p2 = cleaned.get("password2") or ""
+        # Если пароли не заданы — не валидируем (пароль не меняем)
+        if not p1 and not p2:
+            return cleaned
+        # Иначе применяем ту же логику: длина >= 3 и совпадение
+        if len(p1) < 3:
+            self.add_error("password1", "Password must contain at least 3 characters.")
+        if p1 != p2:
+            self.add_error("password2", "Passwords do not match.")
+        return cleaned
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        p1 = self.cleaned_data.get("password1")
+        if p1:  # меняем пароль только если задан
+            user.set_password(p1)
+        if commit:
+            user.save()
+        return user
