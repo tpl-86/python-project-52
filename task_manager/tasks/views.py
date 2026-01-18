@@ -51,5 +51,5 @@ class TaskDeleteView(SuccessMessageMixin, LoginRequiredMixin, UserPassesTestMixi
         return self.request.user == task.author
     
     def handle_no_permission(self):
-        messages.error(self.request, 'У вас нет прав для изменения другого пользователя.')
+        messages.error(self.request, 'У вас нет прав для изменения другого пользователя')
         return super().handle_no_permission()

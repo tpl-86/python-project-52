@@ -26,7 +26,7 @@ class SelfOnlyMixin(LoginRequiredMixin):
             return self.handle_no_permission()
         target_pk = kwargs.get('pk')
         if target_pk is not None and int(target_pk) != request.user.pk:
-            messages.error(request, 'Вы не можете изменять или удалять другого пользователя.')
+            messages.error(request, 'Вы не можете изменять или удалять другого пользователя')
             return redirect('users:list')
         return super().dispatch(request, *args, **kwargs)
 
@@ -39,7 +39,7 @@ class UserCreateView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Пользователь успешно зарегистрирован. Теперь войдите.')
+        messages.success(self.request, 'Пользователь успешно зарегистрирован')
         return response
 
 
@@ -50,7 +50,7 @@ class UserUpdateView(SelfOnlyMixin, UpdateView):
     success_url = reverse_lazy('users:list')
 
     def form_valid(self, form):
-        messages.success(self.request, 'Пользователь успешно изменён.')
+        messages.success(self.request, 'Пользователь успешно изменен')
         return super().form_valid(form)
 
 
@@ -61,7 +61,7 @@ class UserDeleteView(SelfOnlyMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
         try:
-            messages.success(self.request, 'Пользователь успешно удалён.')
+            messages.success(self.request, 'Пользователь успешно удалён')
             return super().post(request, *args, **kwargs)
         except ProtectedError:
             messages.error(request, 'Пользователя нельзя удалить, потому что он связан с задачами')
@@ -71,7 +71,7 @@ class UserDeleteView(SelfOnlyMixin, DeleteView):
 class CustomLoginView(BaseLoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Вы залогинены.')
+        messages.success(self.request, 'Вы залогинены')
         return response
 
 
