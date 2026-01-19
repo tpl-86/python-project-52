@@ -61,7 +61,7 @@ class UserDeleteView(SelfOnlyMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
         try:
-            messages.success(self.request, 'Пользователь успешно удалён')
+            messages.success(self.request, 'Пользователь успешно удален')
             return super().post(request, *args, **kwargs)
         except ProtectedError:
             messages.error(request, 'Пользователя нельзя удалить, потому что он связан с задачами')
