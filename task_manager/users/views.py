@@ -26,7 +26,7 @@ class SelfOnlyMixin(LoginRequiredMixin):
             return self.handle_no_permission()
         target_pk = kwargs.get('pk')
         if target_pk is not None and int(target_pk) != request.user.pk:
-            messages.error(request, 'Вы не можете изменять или удалять другого пользователя')
+            messages.error(request, 'У вас нет прав для изменения')
             return redirect('users:list')
         return super().dispatch(request, *args, **kwargs)
 

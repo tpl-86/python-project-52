@@ -56,7 +56,7 @@ class UserRegisterForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    # ДОБАВЛЕНО: поля пароля как необязательные, чтобы они присутствовали на странице
+    
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(attrs={"id": "id_password1", "class": "form-control"}),
@@ -81,10 +81,8 @@ class UserUpdateForm(forms.ModelForm):
         cleaned = super().clean()
         p1 = cleaned.get("password1") or ""
         p2 = cleaned.get("password2") or ""
-        # Если пароли не заданы — не валидируем (пароль не меняем)
         if not p1 and not p2:
             return cleaned
-        # Иначе применяем ту же логику: длина >= 3 и совпадение
         if len(p1) < 3:
             self.add_error("password1", "Password must contain at least 3 characters.")
         if p1 != p2:
@@ -94,7 +92,7 @@ class UserUpdateForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         p1 = self.cleaned_data.get("password1")
-        if p1:  # меняем пароль только если задан
+        if p1:
             user.set_password(p1)
         if commit:
             user.save()
