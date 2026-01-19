@@ -6,6 +6,7 @@ from django.db.models.deletion import ProtectedError
 from django.contrib import messages
 from .models import Status
 from .forms import StatusForm
+from django.shortcuts import redirect
 
 class StatusListView(LoginRequiredMixin, ListView):
     model = Status
@@ -39,4 +40,4 @@ class StatusDeleteView(SuccessMessageMixin, LoginRequiredMixin, DeleteView):
             return response
         except ProtectedError:
             messages.error(request, "Статус нельзя удалить, потому что он используется")
-            return self.get(request, *args, **kwargs)
+            return redirect(self.success_url)
