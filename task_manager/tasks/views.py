@@ -7,6 +7,7 @@ from .models import Task
 from .forms import TaskForm
 from django_filters.views import FilterView
 from .filters import TaskFilter
+from django.shortcuts import redirect
 
 # Create your views here.
 class TaskListView(LoginRequiredMixin, FilterView):
@@ -40,16 +41,17 @@ class TaskUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('tasks:task_list')
     success_message = 'Задача успешно изменена'
 
-class TaskDeleteView(SuccessMessageMixin, LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Task
-    template_name = 'tasks/task_confirm_delete.html'
-    success_url = reverse_lazy('tasks:task_list')
-    success_message = 'Задача успешно удалена'
+    template_name = "tasks/task_confirm_delete.html"
+    success_url = reverse_lazy("tasks:task_list")
 
     def test_func(self):
-        task = self.get_object()
-        return self.request.user == task.author
-    
+        return self.request.user == self.get_object().author
+
     def handle_no_permission(self):
-        messages.error(self.request, 'У вас нет прав для изменения другого пользователя')
-        return super().handle_no_permission()
+        if not self.request.user.is_authenticated:
+            return super().handle_no_permission()
+
+        messages.error(self.request, "Задачу может удалить только ее автор")
+        return redirect("tasks:task_list")
