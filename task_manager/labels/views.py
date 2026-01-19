@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import Label
 from .forms import LabelForm
+from django.shortcuts import redirect
 
 class LabelListView(LoginRequiredMixin, ListView):
     model = Label
@@ -34,11 +35,9 @@ class LabelDeleteView(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        # M2M: запрещаем удалять, если есть связанные задачи
         if self.object.tasks.exists():
             messages.error(request, "Невозможно удалить метку, потому что она используется")
-            context = self.get_context_data(object=self.object)
-            return self.render_to_response(context, status=200)
+            return redirect(self.success_url)
 
         messages.success(request, self.success_message)
         return super().post(request, *args, **kwargs)
