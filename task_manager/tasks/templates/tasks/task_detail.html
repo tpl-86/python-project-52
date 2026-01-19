@@ -15,9 +15,17 @@
             <div class="col">{{ task.author.username }}</div>
         </div>
         <div class="row p-1">
-            <div class="col">Исполнитель</div>
-            <div class="col">{{ task.executor.username|default:"Нет" }}</div>
-        </div>
+    <div class="col">Исполнитель</div>
+    <div class="col">
+      {% if task.executor %}
+        {% with full_name=task.executor.get_full_name %}
+          {{ full_name|default:task.executor.username }}
+      {% endwith %}
+      {% else %}
+        Нет
+      {% endif %}
+    </div>
+    </div>
         <div class="row p-1">
             <div class="col">Статус</div>
             <div class="col">{{ task.status.name }}</div>
