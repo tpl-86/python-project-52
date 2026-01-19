@@ -20,7 +20,6 @@
             {% endif %}
         </div>
         
-        <!-- Поле: Описание -->
         <div class="mb-3">
             <label class="form-label" for="id_description">Описание</label>
             <textarea name="description" class="form-control {% if form.description.errors %}is-invalid{% endif %}" 
@@ -34,46 +33,34 @@
             {% endif %}
         </div>
         
-        <!-- Поле: Статус (выпадающий список) -->
         <div class="mb-3">
-            <label class="form-label" for="id_status">Статус</label>
-            <select name="status" class="form-control {% if form.status.errors %}is-invalid{% endif %}" id="id_status" required>
-                {% for choice in form.status.field.choices %}
-                    <option value="{{ choice.0 }}" {% if form.status.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
+          <label class="form-label" for="{{ form.status.id_for_label }}">Статус</label>
+            {{ form.status }}
             {% if form.status.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.status.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
+              <div class="invalid-feedback d-block">
+                {% for error in form.status.errors %}{{ error }}{% endfor %}
+              </div>
             {% endif %}
         </div>
         
-        <!-- Поле: Исполнитель (выпадающий список) -->
         <div class="mb-3">
-            <label class="form-label" for="id_executor">Исполнитель</label>
-            <select name="executor" class="form-control {% if form.executor.errors %}is-invalid{% endif %}" id="id_executor">
-                {% for choice in form.executor.field.choices %}
-                    <option value="{{ choice.0 }}" {% if form.executor.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
+          <label class="form-label" for="{{ form.executor.id_for_label }}">Исполнитель</label>
+            {{ form.executor }}
             {% if form.executor.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.executor.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
+              <div class="invalid-feedback d-block">
+                {% for error in form.executor.errors %}{{ error }}{% endfor %}
+               </div>
             {% endif %}
         </div>
+
         <div class="mb-3">
-          <label for="id_labels">Метки</label>
-          <select name="labels" id="id_labels" multiple class="form-control">  {# Multiple select #}
-          {% for label in form.labels.field.queryset %}
-            <option value="{{ label.pk }}" {% if label.pk in form.labels.value %}selected{% endif %}>{{ label.name }}</option>
-          {% endfor %}
-          </select>
+          <label class="form-label" for="{{ form.labels.id_for_label }}">Метки</label>
+          {{ form.labels }}
+          {% if form.labels.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in form.labels.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
         </div>
         
         <button type="submit" class="btn btn-primary">{% if object %}Изменить{% else %}Создать{% endif %}</button>
