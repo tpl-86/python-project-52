@@ -5,11 +5,13 @@ from django.contrib.auth.models import User
 class UserRegisterForm(forms.ModelForm):
     password1 = forms.CharField(
         label="Password",
-        widget=forms.PasswordInput(attrs={"id": "id_password1", "class": "form-control"}),
+        widget=forms.PasswordInput(
+            attrs={"id": "id_password1", "class": "form-control"}),
     )
     password2 = forms.CharField(
         label="Password confirmation",
-        widget=forms.PasswordInput(attrs={"id": "id_password2", "class": "form-control"}),
+        widget=forms.PasswordInput(
+            attrs={"id": "id_password2", "class": "form-control"}),
     )
 
     password = forms.CharField(

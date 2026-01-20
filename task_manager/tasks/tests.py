@@ -118,7 +118,12 @@ class TaskFilterTest(TestCase):
         self.assertContains(response, 'Тестовая задача')
 
     def test_filter_by_executor(self):
-        Task.objects.create(name='Задача с исполнителем', status=self.status, author=self.user, executor=self.other_user)
+        Task.objects.create(
+            name='Задача с исполнителем',
+            status=self.status,
+            author=self.user,
+            executor=self.other_user
+            )
         response = self.client.get(
             reverse('tasks:task_list'),
             {'executor': self.other_user.pk}
