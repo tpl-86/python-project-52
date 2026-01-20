@@ -43,7 +43,6 @@ class LabelCRUDTest(TestCase):
         self.assertEqual(str(messages[0]), 'Метка успешно обновлена')
 
     def test_label_delete_success(self):
-        # Удаляем метку, которая НЕ используется (pk=2)
         response = self.client.post(reverse('labels:label_delete', kwargs={'pk': 2}))
         self.assertRedirects(response, reverse('labels:label_list'))
         self.assertFalse(Label.objects.filter(pk=2).exists())
@@ -51,12 +50,11 @@ class LabelCRUDTest(TestCase):
         self.assertEqual(str(messages[0]), 'Метка успешно удалена')
 
     def test_label_delete_protected(self):
-        # Удаляем метку, которая используется в задаче (pk=1)
         response = self.client.post(reverse('labels:label_delete', kwargs={'pk': self.label.pk}))
-        self.assertEqual(response.status_code, 200)  # Остаётся на странице
-        self.assertTrue(Label.objects.filter(pk=self.label.pk).exists())  # Не удалена
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Label.objects.filter(pk=self.label.pk).exists())
         self.assertTemplateUsed(response, 'labels/label_confirm_delete.html')
-        self.assertContains(response, 'Метку нельзя удалить, потому что она используется в задаче')  # Проверка текста ошибки в шаблоне
+        self.assertContains(response, 'Метку нельзя удалить, потому что она используется в задаче')
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), 'Метку нельзя удалить, потому что она используется в задаче')

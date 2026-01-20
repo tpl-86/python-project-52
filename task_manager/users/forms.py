@@ -12,7 +12,6 @@ class UserRegisterForm(forms.ModelForm):
         widget=forms.PasswordInput(attrs={"id": "id_password2", "class": "form-control"}),
     )
 
-    # алиасы для совместимости с тестами (если приходят password/password_confirmation)
     password = forms.CharField(label="Password (alias)", widget=forms.PasswordInput, required=False)
     password_confirmation = forms.CharField(
         label="Password confirmation (alias)", widget=forms.PasswordInput, required=False

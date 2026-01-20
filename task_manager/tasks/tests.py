@@ -55,7 +55,6 @@ class TaskCRUDTest(TestCase):
         self.assertEqual(str(messages[0]), 'Задача успешно изменена')
 
     def test_task_delete_by_author(self):
-        # Создаём новую задачу без связей для удаления
         new_task = Task.objects.create(name='Удаляемая', status=Status.objects.get(pk=1), author=self.author)
         response = self.client.post(reverse('tasks:task_delete', kwargs={'pk': new_task.pk}))
         self.assertRedirects(response, reverse('tasks:task_list'))
@@ -65,10 +64,10 @@ class TaskCRUDTest(TestCase):
 
     def test_task_delete_by_non_author(self):
         self.client.logout()
-        self.client.login(username='other', password='testpass')  # Логин под другим пользователем
+        self.client.login(username='other', password='testpass')
         response = self.client.post(reverse('tasks:task_delete', kwargs={'pk': self.task.pk}))
-        self.assertEqual(response.status_code, 403)  # Или редирект, в зависимости от handle_no_permission
-        self.assertTrue(Task.objects.filter(pk=self.task.pk).exists())  # Не удалена
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Task.objects.filter(pk=self.task.pk).exists())
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), 'У вас нет прав для изменения другого пользователя.')
 
@@ -87,7 +86,7 @@ class TaskFilterTest(TestCase):
         self.client.login(username='author', password='testpass')
         self.status = Status.objects.get(pk=1)
         self.other_user = User.objects.get(pk=2)
-        self.task = Task.objects.get(pk=1)  # Добавлено: теперь self.task определён
+        self.task = Task.objects.get(pk=1)
 
     def test_filter_by_status(self):
         response = self.client.get(reverse('tasks:task_list'), {'status': self.status.pk})
@@ -100,7 +99,6 @@ class TaskFilterTest(TestCase):
         self.assertContains(response, 'Задача с исполнителем')
 
     def test_filter_by_label(self):
-        # Создаём метку и связываем с задачей динамически
         label = Label.objects.create(name='Тестовая метка')
         self.task.labels.add(label)
         response = self.client.get(reverse('tasks:task_list'), {'labels': label.pk})

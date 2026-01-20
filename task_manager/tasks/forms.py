@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 
 class CustomExecutorChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        # Отображаем полное имя (first_name last_name), если есть, иначе username
         full_name = f"{obj.first_name} {obj.last_name}".strip()
         return full_name if full_name else obj.username
 

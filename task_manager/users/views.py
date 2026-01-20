@@ -3,7 +3,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView
+)
 from django.contrib.auth import logout
 from .forms import UserRegisterForm, UserUpdateForm
 from django.contrib.auth.views import LoginView as BaseLoginView
@@ -18,9 +23,7 @@ class UserListView(ListView):
 
 
 class SelfOnlyMixin(LoginRequiredMixin):
-    """Разрешаем изменять/удалять только самого себя.
-    Проверяем pk из URL до любых действий, чтобы не дать попасть в form_valid/delete.
-    """
+    
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return self.handle_no_permission()

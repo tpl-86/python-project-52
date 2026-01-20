@@ -30,3 +30,5 @@ include = ["task_manager*"]
   "fixtures/*.json",
 ]
 
+[tool.ruff]
+line-length = 79
