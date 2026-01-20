@@ -6,26 +6,36 @@ from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+
 class CustomExecutorFilter(django_filters.ModelChoiceFilter):
     def label_from_instance(self, obj):
         full_name = obj.get_full_name()
         return full_name if full_name else obj.username
 
+
 class TaskFilter(django_filters.FilterSet):
     status = django_filters.ModelChoiceFilter(
         queryset=Status.objects.all(),
         label=_("Статус"),
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'id_status'}),
+        widget=forms.Select(
+            attrs={'class': 'form-control', 'id': 'id_status'}),
     )
     executor = django_filters.ChoiceFilter(
     label=_("Исполнитель"),
-    choices=lambda: [(u.id, u.get_full_name() or u.username) for u in User.objects.all().order_by('first_name', 'last_name', 'username')],
-    widget=forms.Select(attrs={'class': 'form-control', 'id': 'id_executor'}),
+    choices=lambda: [
+        (u.id, u.get_full_name() or u.username)
+        for u in User.objects.all().order_by(
+            'first_name', 'last_name', 'username'
+            )
+            ],
+    widget=forms.Select(
+        attrs={'class': 'form-control', 'id': 'id_executor'}),
     )
     labels = django_filters.ModelChoiceFilter(
         queryset=Label.objects.all(),
         label=_("Метка"),
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'id_labels'}),
+        widget=forms.Select(
+            attrs={'class': 'form-control', 'id': 'id_labels'}),
     )
     self_tasks = django_filters.BooleanFilter(
         method='filter_self_tasks',

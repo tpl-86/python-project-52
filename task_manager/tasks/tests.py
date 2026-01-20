@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from statuses.models import Status
 from labels.models import Label
 
+
 class TaskCRUDTest(TestCase):
     fixtures = ['tasks.json']
 
@@ -47,7 +48,10 @@ class TaskCRUDTest(TestCase):
             'status': 1,
             'executor': 2
         }
-        response = self.client.post(reverse('tasks:task_update', kwargs={'pk': self.task.pk}), data)
+        response = self.client.post(reverse(
+            'tasks:task_update',
+            kwargs={'pk': self.task.pk}
+            ), data)
         self.assertRedirects(response, reverse('tasks:task_list'))
         self.task.refresh_from_db()
         self.assertEqual(self.task.name, 'Обновленная задача')
@@ -55,8 +59,15 @@ class TaskCRUDTest(TestCase):
         self.assertEqual(str(messages[0]), 'Задача успешно изменена')
 
     def test_task_delete_by_author(self):
-        new_task = Task.objects.create(name='Удаляемая', status=Status.objects.get(pk=1), author=self.author)
-        response = self.client.post(reverse('tasks:task_delete', kwargs={'pk': new_task.pk}))
+        new_task = Task.objects.create(
+            name='Удаляемая',
+            status=Status.objects.get(pk=1),
+            author=self.author
+            )
+        response = self.client.post(reverse(
+            'tasks:task_delete',
+            kwargs={'pk': new_task.pk}
+            ))
         self.assertRedirects(response, reverse('tasks:task_list'))
         self.assertFalse(Task.objects.filter(pk=new_task.pk).exists())
         messages = list(get_messages(response.wsgi_request))
@@ -65,17 +76,27 @@ class TaskCRUDTest(TestCase):
     def test_task_delete_by_non_author(self):
         self.client.logout()
         self.client.login(username='other', password='testpass')
-        response = self.client.post(reverse('tasks:task_delete', kwargs={'pk': self.task.pk}))
+        response = self.client.post(reverse(
+            'tasks:task_delete',
+            kwargs={'pk': self.task.pk}
+            ))
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Task.objects.filter(pk=self.task.pk).exists())
         messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), 'У вас нет прав для изменения другого пользователя.')
+        self.assertEqual(
+            str(messages[0]),
+            'У вас нет прав для изменения другого пользователя.'
+            )
 
     def test_task_detail(self):
-        response = self.client.get(reverse('tasks:task_detail', kwargs={'pk': self.task.pk}))
+        response = self.client.get(reverse(
+            'tasks:task_detail',
+            kwargs={'pk': self.task.pk}
+            ))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'tasks/task_detail.html')
         self.assertContains(response, 'Тестовая задача')
+
 
 class TaskFilterTest(TestCase):
     fixtures = ['tasks.json']
@@ -89,25 +110,40 @@ class TaskFilterTest(TestCase):
         self.task = Task.objects.get(pk=1)
 
     def test_filter_by_status(self):
-        response = self.client.get(reverse('tasks:task_list'), {'status': self.status.pk})
+        response = self.client.get(
+            reverse('tasks:task_list'),
+            {'status': self.status.pk}
+            )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Тестовая задача')
 
     def test_filter_by_executor(self):
         Task.objects.create(name='Задача с исполнителем', status=self.status, author=self.user, executor=self.other_user)
-        response = self.client.get(reverse('tasks:task_list'), {'executor': self.other_user.pk})
+        response = self.client.get(
+            reverse('tasks:task_list'),
+            {'executor': self.other_user.pk}
+            )
         self.assertContains(response, 'Задача с исполнителем')
 
     def test_filter_by_label(self):
         label = Label.objects.create(name='Тестовая метка')
         self.task.labels.add(label)
-        response = self.client.get(reverse('tasks:task_list'), {'labels': label.pk})
+        response = self.client.get(
+            reverse('tasks:task_list'),
+            {'labels': label.pk}
+            )
         self.assertContains(response, 'Тестовая задача')
 
     def test_filter_self_tasks(self):
-        response = self.client.get(reverse('tasks:task_list'), {'self_tasks': 'on'})
+        response = self.client.get(
+            reverse('tasks:task_list'),
+            {'self_tasks': 'on'}
+            )
         self.assertContains(response, 'Тестовая задача')
 
     def test_filter_combined(self):
-        response = self.client.get(reverse('tasks:task_list'), {'status': self.status.pk, 'self_tasks': 'on'})
+        response = self.client.get(
+            reverse('tasks:task_list'),
+            {'status': self.status.pk, 'self_tasks': 'on'}
+            )
         self.assertEqual(response.status_code, 200)

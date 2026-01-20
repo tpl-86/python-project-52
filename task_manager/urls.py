@@ -20,14 +20,15 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from task_manager.users.views import logout_view, CustomLoginView
 
-def index(request):
-    return HttpResponse("Привет! Приложение успешно запущено.")
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("admin/", admin.site.urls),
     path('users/', include('task_manager.users.urls', namespace='users')),
-    path('statuses/', include('task_manager.statuses.urls', namespace='statuses')),
+    path('statuses/', include(
+        'task_manager.statuses.urls',
+        namespace='statuses'
+        )),
     path('tasks/', include('task_manager.tasks.urls', namespace='tasks')),
     path('labels/', include('task_manager.labels.urls', namespace='labels')),
     path('login/', CustomLoginView.as_view(

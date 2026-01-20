@@ -27,15 +27,22 @@ class StatusCRUDTest(TestCase):
 
     def test_status_create(self):
         data = {'name': 'На тестировании'}
-        response = self.client.post(reverse('statuses:status_create'), data)
+        response = self.client.post(
+            reverse('statuses:status_create'),
+            data
+            )
         self.assertRedirects(response, reverse('statuses:status_list'))
-        self.assertTrue(Status.objects.filter(name='На тестировании').exists())
+        self.assertTrue(Status.objects.filter(
+            name='На тестировании').exists())
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), 'Статус успешно создан')
 
     def test_status_update(self):
         data = {'name': 'Завершен'}
-        response = self.client.post(reverse('statuses:status_update', kwargs={'pk': self.status.pk}), data)
+        response = self.client.post(reverse(
+            'statuses:status_update',
+            kwargs={'pk': self.status.pk}
+            ), data)
         self.assertRedirects(response, reverse('statuses:status_list'))
         self.status.refresh_from_db()
         self.assertEqual(self.status.name, 'Завершен')
@@ -43,16 +50,28 @@ class StatusCRUDTest(TestCase):
         self.assertEqual(str(messages[0]), 'Статус успешно изменен')
 
     def test_status_delete_success(self):
-        response = self.client.post(reverse('statuses:status_delete', kwargs={'pk': 2}))
+        response = self.client.post(reverse(
+            'statuses:status_delete',
+            kwargs={'pk': 2}
+            ))
         self.assertRedirects(response, reverse('statuses:status_list'))
         self.assertFalse(Status.objects.filter(pk=2).exists())
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(str(messages[0]), 'Статус успешно удален')
 
     def test_status_delete_protected(self):
-        response = self.client.post(reverse('statuses:status_delete', kwargs={'pk': self.status.pk}))
+        response = self.client.post(reverse(
+            'statuses:status_delete',
+            kwargs={'pk': self.status.pk}
+            ))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Status.objects.filter(pk=self.status.pk).exists())
-        self.assertTemplateUsed(response, 'statuses/status_confirm_delete.html')
+        self.assertTemplateUsed(
+            response,
+            'statuses/status_confirm_delete.html'
+            )
         messages = list(get_messages(response.wsgi_request))
-        self.assertEqual(str(messages[0]), 'Статус нельзя удалить, потому что он используется')
+        self.assertEqual(
+            str(messages[0]),
+            'Статус нельзя удалить, потому что он используется'
+            )

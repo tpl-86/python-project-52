@@ -11,6 +11,6 @@ class StatusForm(forms.ModelForm):
         }
         error_messages = {
             'name': {
-                'unique': "Task status с таким Имя уже существует.",  # Кастомное сообщение для уникальности
+                'unique': "Task status с таким Имя уже существует.",
             },
         }
