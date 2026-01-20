@@ -151,23 +151,45 @@ if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
+# Rollbar configuration
+ROLLBAR = {
+    'access_token': os.getenv('ROLLBAR_ACCESS_TOKEN'),
+    'environment': os.getenv('ROLLBAR_ENVIRONMENT', 'development'),
+    'code_version': '1.0',  # Версия вашего кода (можно из Git)
+    'branch': os.getenv('ROLLBAR_BRANCH', 'main'),
+    'server': {
+        'root': BASE_DIR,  # Путь к проекту
+    },
+    'capture_username': True,  # Логировать username при ошибках
+    'capture_email': True,     # Логировать email
+    'capture_ip': True,        # Логировать IP
+}
+
+import rollbar
+rollbar.init(**ROLLBAR)
+
+# Middleware для обработки ошибок
+MIDDLEWARE += ['rollbar.contrib.django.middleware.RollbarNotifierMiddleware']
+
 # Логирование ошибок (опционально, для debug)
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {
-            "format": "[%(asctime)s] %(levelname)s %(name)s: %(message)s",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'rollbar': {
+            'level': 'ERROR',
+            'class': 'rollbar.logger.RollbarHandler',
         },
     },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "standard",
+    'loggers': {
+        'django': {
+            'handlers': ['rollbar'],
+            'level': 'ERROR',
         },
-    },
-    "loggers": {
-        "django": {"handlers": ["console"], "level": "INFO"},
-        "django.request": {"handlers": ["console"], "level": "WARNING", "propagate": False},
     },
 }
+
+if not DEBUG:
+    # Rollbar только в проде (или если DEBUG=False)
+    rollbar.init(**ROLLBAR)
+    MIDDLEWARE += ['rollbar.contrib.django.middleware.RollbarNotifierMiddleware']
