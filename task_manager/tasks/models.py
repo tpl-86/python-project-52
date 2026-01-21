@@ -1,7 +1,8 @@
-from django.db import models
 from django.conf import settings
-from task_manager.statuses.models import Status
+from django.db import models
+
 from task_manager.labels.models import Label
+from task_manager.statuses.models import Status
 
 
 class Task(models.Model):
@@ -10,18 +11,18 @@ class Task(models.Model):
     status = models.ForeignKey(Status, on_delete=models.PROTECT)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='authored_task',
-        on_delete=models.PROTECT
+        related_name="authored_task",
+        on_delete=models.PROTECT,
     )
     executor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='executed_task',
+        related_name="executed_task",
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    labels = models.ManyToManyField(Label, blank=True, related_name='tasks')
-    
+    labels = models.ManyToManyField(Label, blank=True, related_name="tasks")
+
     def __str__(self):
         return self.name

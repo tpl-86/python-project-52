@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
 import dj_database_url
+import rollbar
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -29,25 +30,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
-"webserver",
-os.getenv("RENDER_EXTERNAL_HOSTNAME", ""),
-"localhost",
-"127.0.0.1",
+    "webserver",
+    os.getenv("RENDER_EXTERNAL_HOSTNAME", ""),
+    "localhost",
+    "127.0.0.1",
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     "django_bootstrap5",
     "task_manager.users",
     "task_manager.statuses",
@@ -57,21 +58,21 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 # Страницы логина/редиректы
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 
-ROOT_URLCONF = 'task_manager.urls'
+ROOT_URLCONF = "task_manager.urls"
 
 TEMPLATES = [
     {
@@ -99,12 +100,12 @@ WSGI_APPLICATION = "task_manager.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASES = {
-    'default': dj_database_url.config(
+    "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
-        ssl_require=bool(os.getenv('RENDER_EXTERNAL_HOSTNAME')),
+        ssl_require=bool(os.getenv("RENDER_EXTERNAL_HOSTNAME")),
     )
 }
 
@@ -114,16 +115,28 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "UserAttributeSimilarityValidator"
+            ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator"
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator"
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": (
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator"
+        ),
     },
 ]
 
@@ -131,9 +144,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -143,48 +156,51 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE = (
+        "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    )
 
 
 # Rollbar configuration
 ROLLBAR = {
-    'access_token': os.getenv('ROLLBAR_ACCESS_TOKEN'),
-    'environment': os.getenv('ROLLBAR_ENVIRONMENT', 'development'),
-    'code_version': '1.0',  # Версия вашего кода (можно из Git)
-    'branch': os.getenv('ROLLBAR_BRANCH', 'main'),
-    'server': {
-        'root': BASE_DIR,  # Путь к проекту
+    "access_token": os.getenv("ROLLBAR_ACCESS_TOKEN"),
+    "environment": os.getenv("ROLLBAR_ENVIRONMENT", "development"),
+    "code_version": "1.0",  # Версия вашего кода (можно из Git)
+    "branch": os.getenv("ROLLBAR_BRANCH", "main"),
+    "server": {
+        "root": BASE_DIR,  # Путь к проекту
     },
-    'capture_username': True,  # Логировать username при ошибках
-    'capture_email': True,     # Логировать email
-    'capture_ip': True,        # Логировать IP
+    "capture_username": True,  # Логировать username при ошибках
+    "capture_email": True,  # Логировать email
+    "capture_ip": True,  # Логировать IP
 }
 
-import rollbar
 rollbar.init(**ROLLBAR)
 
 # Middleware для обработки ошибок
-MIDDLEWARE += ['rollbar.contrib.django.middleware.RollbarNotifierMiddleware']
+MIDDLEWARE += [
+    "rollbar.contrib.django.middleware.RollbarNotifierMiddleware",
+]
 
 # Логирование ошибок (опционально, для debug)
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'rollbar': {
-            'level': 'ERROR',
-            'class': 'rollbar.logger.RollbarHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "rollbar": {
+            "level": "ERROR",
+            "class": "rollbar.logger.RollbarHandler",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['rollbar'],
-            'level': 'ERROR',
+    "loggers": {
+        "django": {
+            "handlers": ["rollbar"],
+            "level": "ERROR",
         },
     },
 }
@@ -192,4 +208,6 @@ LOGGING = {
 if not DEBUG:
     # Rollbar только в проде (или если DEBUG=False)
     rollbar.init(**ROLLBAR)
-    MIDDLEWARE += ['rollbar.contrib.django.middleware.RollbarNotifierMiddleware']
+    MIDDLEWARE += [
+        "rollbar.contrib.django.middleware.RollbarNotifierMiddleware",
+    ]

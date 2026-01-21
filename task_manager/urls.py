@@ -14,24 +14,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from django.views.generic import TemplateView
-from task_manager.users.views import logout_view, CustomLoginView
 
+from django.contrib import admin
+from django.urls import include, path
+from django.views.generic import TemplateView
+
+from task_manager.users.views import CustomLoginView, logout_view
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("admin/", admin.site.urls),
-    path('users/', include('task_manager.users.urls', namespace='users')),
-    path('statuses/', include(
-        'task_manager.statuses.urls',
-        namespace='statuses'
-        )),
-    path('tasks/', include('task_manager.tasks.urls', namespace='tasks')),
-    path('labels/', include('task_manager.labels.urls', namespace='labels')),
-    path('login/', CustomLoginView.as_view(
-        template_name='registration/login.html'
-    ), name='login'),
-    path('logout/', logout_view, name='logout'),
+    path("users/", include("task_manager.users.urls", namespace="users")),
+    path(
+        "statuses/", include("task_manager.statuses.urls", namespace="statuses")
+    ),
+    path("tasks/", include("task_manager.tasks.urls", namespace="tasks")),
+    path("labels/", include("task_manager.labels.urls", namespace="labels")),
+    path(
+        "login/",
+        CustomLoginView.as_view(template_name="registration/login.html"),
+        name="login",
+    ),
+    path("logout/", logout_view, name="logout"),
 ]

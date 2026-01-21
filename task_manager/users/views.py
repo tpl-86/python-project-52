@@ -1,88 +1,83 @@
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
-from django.views.generic import (
-    ListView,
-    CreateView,
-    UpdateView,
-    DeleteView
-)
-from django.contrib.auth import logout
-from .forms import UserRegisterForm, UserUpdateForm
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.db.models.deletion import ProtectedError
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+
+from .forms import UserRegisterForm, UserUpdateForm
 
 
 class UserListView(ListView):
     model = User
-    template_name = 'users/user_list.html'
-    context_object_name = 'users'
-    queryset = User.objects.order_by('id')
+    template_name = "users/user_list.html"
+    context_object_name = "users"
+    queryset = User.objects.order_by("id")
 
 
 class SelfOnlyMixin(LoginRequiredMixin):
-    
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
-        target_pk = kwargs.get('pk')
+        target_pk = kwargs.get("pk")
         if target_pk is not None and int(target_pk) != request.user.pk:
-            messages.error(request, 'У вас нет прав для изменения')
-            return redirect('users:list')
+            messages.error(request, "У вас нет прав для изменения")
+            return redirect("users:list")
         return super().dispatch(request, *args, **kwargs)
 
 
 class UserCreateView(CreateView):
     model = User
     form_class = UserRegisterForm
-    template_name = 'users/user_form.html'
-    success_url = reverse_lazy('login')
+    template_name = "users/user_form.html"
+    success_url = reverse_lazy("login")
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Пользователь успешно зарегистрирован')
+        messages.success(self.request, "Пользователь успешно зарегистрирован")
         return response
 
 
 class UserUpdateView(SelfOnlyMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
-    template_name = 'users/user_form.html'
-    success_url = reverse_lazy('users:list')
+    template_name = "users/user_form.html"
+    success_url = reverse_lazy("users:list")
 
     def form_valid(self, form):
-        messages.success(self.request, 'Пользователь успешно изменен')
+        messages.success(self.request, "Пользователь успешно изменен")
         return super().form_valid(form)
 
 
 class UserDeleteView(SelfOnlyMixin, DeleteView):
     model = User
-    template_name = 'users/user_confirm_delete.html'
-    success_url = reverse_lazy('users:list')
+    template_name = "users/user_confirm_delete.html"
+    success_url = reverse_lazy("users:list")
 
     def post(self, request, *args, **kwargs):
         try:
-            messages.success(self.request, 'Пользователь успешно удален')
+            messages.success(self.request, "Пользователь успешно удален")
             return super().post(request, *args, **kwargs)
         except ProtectedError:
             messages.error(
                 request,
-                'Пользователя нельзя удалить, потому что он связан с задачами'
-                )
+                "Пользователя нельзя удалить, потому что он связан с задачами",
+            )
             return self.get(request, *args, **kwargs)
 
 
 class CustomLoginView(BaseLoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Вы залогинены')
+        messages.success(self.request, "Вы залогинены")
         return response
 
 
 def logout_view(request):
     if request.user.is_authenticated:
         logout(request)
-        messages.info(request, 'Вы разлогинены')
-    return redirect(reverse_lazy('home'))
+        messages.info(request, "Вы разлогинены")
+    return redirect(reverse_lazy("home"))

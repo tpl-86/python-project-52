@@ -6,23 +6,23 @@ class UserRegisterForm(forms.ModelForm):
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(
-            attrs={"id": "id_password1", "class": "form-control"}),
+            attrs={"id": "id_password1", "class": "form-control"}
+        ),
     )
     password2 = forms.CharField(
         label="Password confirmation",
         widget=forms.PasswordInput(
-            attrs={"id": "id_password2", "class": "form-control"}),
+            attrs={"id": "id_password2", "class": "form-control"}
+        ),
     )
 
     password = forms.CharField(
-        label="Password (alias)",
-        widget=forms.PasswordInput,
-        required=False
-        )
+        label="Password (alias)", widget=forms.PasswordInput, required=False
+    )
     password_confirmation = forms.CharField(
         label="Password confirmation (alias)",
         widget=forms.PasswordInput,
-        required=False
+        required=False,
     )
 
     class Meta:
@@ -30,11 +30,14 @@ class UserRegisterForm(forms.ModelForm):
         fields = ("username", "first_name", "last_name")
         widgets = {
             "username": forms.TextInput(
-                attrs={"id": "id_username", "class": "form-control"}),
+                attrs={"id": "id_username", "class": "form-control"}
+            ),
             "first_name": forms.TextInput(
-                attrs={"id": "id_first_name", "class": "form-control"}),
+                attrs={"id": "id_first_name", "class": "form-control"}
+            ),
             "last_name": forms.TextInput(
-                attrs={"id": "id_last_name", "class": "form-control"}),
+                attrs={"id": "id_last_name", "class": "form-control"}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -53,8 +56,8 @@ class UserRegisterForm(forms.ModelForm):
         p2 = cleaned.get("password2") or ""
         if len(p1) < 3:
             self.add_error(
-                "password1",
-                "Password must contain at least 3 characters.")
+                "password1", "Password must contain at least 3 characters."
+            )
         if p1 != p2:
             self.add_error("password2", "Passwords do not match.")
         return cleaned
@@ -68,17 +71,18 @@ class UserRegisterForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    
     password1 = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(
-            attrs={"id": "id_password1", "class": "form-control"}),
+            attrs={"id": "id_password1", "class": "form-control"}
+        ),
         required=False,
     )
     password2 = forms.CharField(
         label="Password confirmation",
         widget=forms.PasswordInput(
-            attrs={"id": "id_password2", "class": "form-control"}),
+            attrs={"id": "id_password2", "class": "form-control"}
+        ),
         required=False,
     )
 
@@ -87,11 +91,14 @@ class UserUpdateForm(forms.ModelForm):
         fields = ("username", "first_name", "last_name")
         widgets = {
             "username": forms.TextInput(
-                attrs={"id": "id_username", "class": "form-control"}),
+                attrs={"id": "id_username", "class": "form-control"}
+            ),
             "first_name": forms.TextInput(
-                attrs={"id": "id_first_name", "class": "form-control"}),
+                attrs={"id": "id_first_name", "class": "form-control"}
+            ),
             "last_name": forms.TextInput(
-                attrs={"id": "id_last_name", "class": "form-control"}),
+                attrs={"id": "id_last_name", "class": "form-control"}
+            ),
         }
 
     def clean(self):
@@ -102,9 +109,8 @@ class UserUpdateForm(forms.ModelForm):
             return cleaned
         if len(p1) < 3:
             self.add_error(
-                "password1",
-                "Password must contain at least 3 characters."
-                )
+                "password1", "Password must contain at least 3 characters."
+            )
         if p1 != p2:
             self.add_error("password2", "Passwords do not match.")
         return cleaned

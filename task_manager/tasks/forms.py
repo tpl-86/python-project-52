@@ -1,6 +1,7 @@
 from django import forms
-from .models import Task
 from django.contrib.auth.models import User
+
+from .models import Task
 
 
 class CustomExecutorChoiceField(forms.ModelChoiceField):
@@ -11,32 +12,33 @@ class CustomExecutorChoiceField(forms.ModelChoiceField):
 
 class TaskForm(forms.ModelForm):
     executor = CustomExecutorChoiceField(
-        queryset=User.objects.all().order_by('username'),
+        queryset=User.objects.all().order_by("username"),
         widget=forms.Select(
-            attrs={'class': 'form-control', 'id': 'id_executor'}),
-        required=False
+            attrs={"class": "form-control", "id": "id_executor"}
+        ),
+        required=False,
     )
 
     class Meta:
         model = Task
         fields = [
-            'name',
-            'description',
-            'status',
-            'executor',
-            'labels',
-            ]
+            "name",
+            "description",
+            "status",
+            "executor",
+            "labels",
+        ]
         widgets = {
-            'name': forms.TextInput(
-                attrs={'class': 'form-control', 'id': 'id_name'}
-                ),
-            'description': forms.Textarea(
-                attrs={'class': 'form-control', 'id': 'id_description'}
-                ),
-            'status': forms.Select(
-                attrs={'class': 'form-control', 'id': 'id_status'}
-                ),
-            'labels': forms.SelectMultiple(
-                attrs={'class': 'form-control', 'id': 'id_labels'}
-                ),
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "id": "id_name"}
+            ),
+            "description": forms.Textarea(
+                attrs={"class": "form-control", "id": "id_description"}
+            ),
+            "status": forms.Select(
+                attrs={"class": "form-control", "id": "id_status"}
+            ),
+            "labels": forms.SelectMultiple(
+                attrs={"class": "form-control", "id": "id_labels"}
+            ),
         }
