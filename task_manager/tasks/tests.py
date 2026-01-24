@@ -2,8 +2,9 @@ from django.contrib.auth.models import User
 from django.contrib.messages import get_messages
 from django.test import Client, TestCase
 from django.urls import reverse
+
 from task_manager.labels.models import Label
-from statuses.models import Status
+from task_manager.statuses.models import Status
 
 from .models import Task
 
@@ -78,12 +79,12 @@ class TaskCRUDTest(TestCase):
         response = self.client.post(
             reverse("tasks:task_delete", kwargs={"pk": self.task.pk})
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
         self.assertTrue(Task.objects.filter(pk=self.task.pk).exists())
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(
             str(messages[0]),
-            "У вас нет прав для изменения другого пользователя.",
+            "Задачу может удалить только ее автор",
         )
 
     def test_task_detail(self):

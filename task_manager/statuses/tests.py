@@ -57,13 +57,22 @@ class StatusCRUDTest(TestCase):
 
     def test_status_delete_protected(self):
         response = self.client.post(
-            reverse("statuses:status_delete", kwargs={"pk": self.status.pk})
+            reverse("statuses:status_delete", kwargs={"pk": self.status.pk}),
+            follow=True,
         )
+
+        self.assertTrue(response.redirect_chain)
+        last_url, last_status = response.redirect_chain[-1]
+        self.assertEqual(last_status, 302)
+        self.assertEqual(last_url, reverse("statuses:status_list"))
+
         self.assertEqual(response.status_code, 200)
+
         self.assertTrue(Status.objects.filter(pk=self.status.pk).exists())
-        self.assertTemplateUsed(response, "statuses/status_confirm_delete.html")
-        messages = list(get_messages(response.wsgi_request))
+
+        messages = list(response.context["messages"])
+        self.assertEqual(len(messages), 1)
         self.assertEqual(
             str(messages[0]),
-            "Статус нельзя удалить, потому что он используется",
+            "Невозможно удалить статус",
         )

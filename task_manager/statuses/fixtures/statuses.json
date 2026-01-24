@@ -34,16 +34,15 @@
     }
   },
   {
-    "model": "task_manager.task",
+    "model": "tasks.task",
     "pk": 1,
     "fields": {
-      "title": "Тестовая задача",
+      "name": "Тестовая задача",
       "description": "",
+      "status": 1,
       "author": 1,
-      "assignee": null,
-      "created_at": "2026-01-06T00:00:00Z",
-      "done": false,
-      "status": 1
+      "executor": null,
+      "created_at": "2026-01-06T00:00:00Z"
     }
   }
 ]
