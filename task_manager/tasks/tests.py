@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.messages import get_messages
 from django.test import Client, TestCase
 from django.urls import reverse
-from labels.models import Label
+from task_manager.labels.models import Label
 from statuses.models import Status
 
 from .models import Task
