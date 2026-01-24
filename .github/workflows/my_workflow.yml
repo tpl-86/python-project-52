@@ -36,7 +36,7 @@ jobs:
           make test-coverage
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@2d5e1d2d0f7a7a3d4b5e6d7f8a9b0c1d2e3f4g5
+        uses: sonarsource/sonarqube-scan-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
