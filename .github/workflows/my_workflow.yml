@@ -7,19 +7,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DEBUG: "True"
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: |
           pip install uv
           make install
+
       - name: Run linter and pytest
         run: |
           make check
+
       - name: Run test coverage
         run: |
           make test-coverage
