@@ -43,7 +43,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=tpl-86_python-project-52
-            -Dsonar.organization=tpl-86  # Замените на вашу реальную организацию (проверьте в SonarCloud)
+            -Dsonar.organization=tpl-86
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.coverage.exclusions=tests/**
             -Dsonar.exclusions=tests/**
